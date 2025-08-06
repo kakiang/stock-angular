@@ -1,0 +1,81 @@
+<div class="bg-white rounded-lg shadow-xl overflow-hidden py-8">
+  <div class="overflow-x-auto">
+    @if(uiMessageService.errorMessage()){
+    <div class="max-w-xl mx-auto text-center p-2 rounded relative bg-red-100 text-red-700 border">
+      <strong class="font-bold">Erreur ! </strong>
+      <span class="block sm:inline">{{ uiMessageService.errorMessage() }}.</span>
+    </div>
+    }
+    <form
+      [formGroup]="categoryForm"
+      (ngSubmit)="onSubmit()"
+      class="space-y-4 max-w-md mx-auto pt-4"
+    >
+      <div>
+        <label class="block mb-1">Code Catégorie</label>
+        <input
+          type="text"
+          formControlName="category_code"
+          class="w-full border p-2 rounded"
+        />
+        @if(categoryForm.get('category_code')?.touched &&
+        categoryForm.get('category_code')?.invalid){
+        <div class="text-red-500 text-sm">Code catégorie est obligatoire.</div>
+        }
+      </div>
+      <div>
+        <label class="block mb-1">Nom Catégorie</label>
+        <input
+          type="text"
+          formControlName="category_name"
+          class="w-full border p-2 rounded"
+        />
+        @if(categoryForm.get('category_name')?.touched &&
+        categoryForm.get('category_name')?.invalid){
+        <div class="text-red-500 text-sm">Nom catégorie est obligatoire.</div>
+        }
+      </div>
+
+      <div class="flex justify-end mt-4">
+        <button
+          type="submit"
+          [disabled]="!categoryForm.valid || isSubmitting()"
+          [ngClass]="{
+            'bg-indigo-600 hover:bg-indigo-700 cursor-pointer':
+              categoryForm.valid && !isSubmitting(),
+            'bg-indigo-300 cursor-not-allowed':
+              !categoryForm.valid || isSubmitting()
+          }"
+          class="inline-flex items-center gap-2 py-2 px-4 rounded text-sm font-medium text-white transition"
+        >
+          @if(isSubmitting()){
+          <svg
+            class="animate-spin h-4 w-4 text-white"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            />
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            />
+          </svg>
+
+          <span class="animate-pulse">Saving</span>
+          } @else {
+          <span>{{ categoryId ? "METTRE A JOUR" : "ENREGISTRER" }}</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

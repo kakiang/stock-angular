@@ -1,0 +1,114 @@
+@if(uiMessageService.successMessage()){
+<div
+  class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"
+>
+  <strong class="font-bold">Success ! </strong>
+  <span class="block sm:inline">{{ uiMessageService.successMessage() }}.</span>
+</div>
+}
+<div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+  <div class="flex justify-between items-center px-6 py-4 border-b bg-gray-50">
+    <h2 class="text-lg font-semibold text-gray-800">LISTE DES PRODUITS</h2>
+    <a
+      routerLink="/products/new"
+      class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded shadow transition"
+    >
+      + AJOUTER UN PRODUIT
+    </a>
+  </div>
+  @if(loading()){
+  <div class="py-4 text-center text-sm text-gray-500 animate-pulse">
+    Chargement de produits...
+  </div>
+  }
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-sm text-left text-gray-800">
+      <thead class="bg-gray-200 text-gray-900 uppercase font-semibold">
+        <tr>
+          <th class="py-3 px-6">Nom produit</th>
+          <th class="py-3 px-6">Code produit</th>
+          <th class="py-3 px-6 text-center">Categorie</th>
+          <th class="py-3 px-12 text-right">Prix</th>
+          <th class="py-3 px-9 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        @for (product of products(); track product.id) {
+        <tr class="hover:bg-gray-50 transition">
+          <td class="py-2 px-6 font-semibold">
+            {{ product.product_name }}
+          </td>
+          <td class="py-2 px-6">
+            {{ product.product_code }}
+          </td>
+          <td class="py-2 px-6 text-center">
+            <span class="inline-block text-indigo-700 px-2 py-1">
+              {{ product.category.category_name }}
+            </span>
+          </td>
+          <td class="py-2 px-12 text-right font-semibold">
+            {{ product.price | number : "1.2-2" }} Fcfa
+          </td>
+          <td class="py-2 px-6 text-right space-x-6">
+            <button
+              class="text-2xl hover:scale-110 text-blue-600 hover:text-blue-800 transition"
+              (click)="editProduct(product.id)"
+              title="Edit Product"
+              aria-label="Edit product"
+            >
+              ✏️
+            </button>
+            <button
+              class="text-2xl hover:scale-110 text-red-600 hover:text-red-800 transition"
+              (click)="pendingDeleteId.set(product.id)"
+              title="Delete Product"
+              aria-label="Delete product"
+            >
+              🗑️
+            </button>
+          </td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="5" class="py-6 text-center text-gray-500">
+            Aucun produit disponible.
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="p-4 border-t text-sm text-gray-500 text-center">
+    Affichage de {{ products().length }} produits.
+  </div>
+</div>
+
+@if(pendingDeleteId() !== null) {
+
+<div
+  class="fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-50"
+>
+  <div class="bg-white rounded-lg shadow-lg p-6 w-[90%] max-w-sm text-center">
+    <p class="text-gray-800 text-base mb-4">
+      Etes-vous sûr de vouloir supprimer ce produit?
+    </p>
+    <div class="flex justify-center gap-4 mt-6">
+      <button
+        (click)="confirmDelete()"
+        class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded"
+      >
+        Oui, Supprimer
+      </button>
+      <button
+        (click)="pendingDeleteId.set(null)"
+        class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded"
+      >
+        Annuler
+      </button>
+    </div>
+  </div>
+</div>
+
+}

@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "product_name": "Gaming Laptop",
+    "product_code": "LAP001",
+    "price": 1499.99,
+    "category": {
+      "id": 1,
+      "category_name": "Electronics",
+      "category_code": "ELECTRONICS"
+    }
+  },
+  {
+    "id": 2,
+    "product_name": "Shirt polo",
+    "product_code": "SH001",
+    "price": 499.99,
+    "category": {
+      "id": 103,
+      "category_name": "Textile",
+      "category_code": "TEXTILE"
+    }
+  },
+  {
+    "id": 3,
+    "product_name": "Wireless Mouse",
+    "product_code": "MSE001",
+    "price": 79.99,
+    "category": {
+      "id": 1,
+      "category_name": "Electronics",
+      "category_code": "ELECTRONICS"
+    }
+  },
+  {
+    "id": 4,
+    "product_name": "Jeans",
+    "product_code": "JNS001",
+    "price": 89.99,
+    "category": {
+      "id": 103,
+      "category_name": "Textile",
+      "category_code": "TEXTILE"
+    }
+  }
+]

@@ -1,11 +1,13 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, Signal, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductService } from '../../services/product.service';
 import { CategoryService } from '../../services/category.service';
-import { Category } from '../../models/category.interface';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { UiMessageService } from '../../services/ui-message.service';
+import { take } from 'rxjs';
+import { Product } from '../../models/product.interface';
+import { Category } from '../../models/category.interface';
 
 @Component({
   selector: 'app-product-form-component',
@@ -14,14 +16,10 @@ import { UiMessageService } from '../../services/ui-message.service';
   styleUrl: './product-form-component.scss'
 })
 export class ProductFormComponent implements OnInit {
-  productForm: FormGroup;
-  categories: Category[] = [];
-  successMessage = '';
-  errorMessage = '';
+  productForm!: FormGroup;
   isSubmitting = signal(false);
-
   productId: number | null = null;
-
+  categories!: Signal<Category[]>;;
 
   constructor(
     private fb: FormBuilder,
@@ -31,6 +29,26 @@ export class ProductFormComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) {
+
+  }
+
+  ngOnInit(): void {
+    this.buildForm();
+    this.categoryService.getCategories().subscribe();
+    this.categories = this.categoryService.categories;
+
+    this.route.paramMap
+      .pipe(take(1))
+      .subscribe(params => {
+        const id = params.get('id');
+        if (id) {
+          this.productId = +id;
+          this.loadProduct(this.productId);
+        }
+      });
+  }
+
+  private buildForm() {
     this.productForm = this.fb.group({
       product_code: ['', Validators.required],
       product_name: ['', Validators.required],
@@ -38,24 +56,6 @@ export class ProductFormComponent implements OnInit {
       category: this.fb.group({
         id: [null, Validators.required]
       })
-    });
-  }
-
-  ngOnInit(): void {
-    this.loadCategories();
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
-      if (id) {
-        this.productId = +id;
-        this.loadProduct(this.productId);
-      }
-    });
-  }
-
-  loadCategories() {
-    this.categoryService.getCategories().subscribe({
-      next: cats => this.categories = cats,
-      error: err => console.error('Failed to load categories', err)
     });
   }
 
@@ -71,48 +71,56 @@ export class ProductFormComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.productForm.valid) {
-      this.isSubmitting.set(true);
-      const productData = this.productForm.value;
-
-      if (this.productId) {
-
-        productData.id = this.productId;
-        this.productService.updateProduct(productData).subscribe({
-          next: response => this.success(response, "modifié"),
-          error: (err) => { this.failure(err, "update"); this.isSubmitting.set(false); },
-          complete: () => this.isSubmitting.set(false)
-        });
-
-      } else {
-
-        this.productService.saveProduct(productData).subscribe({
-          next: response => this.success(response, "ajouté"),
-          error: (err) => { this.failure(err, "Save"); this.isSubmitting.set(false); },
-          complete: () => this.isSubmitting.set(false)
-        });
-      }
-
-    } else {
+    if (!this.productForm.valid) {
       this.productForm.markAllAsTouched();
+      return;
+    }
+    this.isSubmitting.set(true);
+    const productData = this.productForm.value;
+
+    if (this.productId) {
+      this.update(productData);
+    } else {
+      this.create(productData);
     }
   }
-  private failure(err: any, operation: string) {
-    console.error(`${operation} failed`, err);
-    this.errorMessage = `Echec: ${err?.error?.message}.`;;
-    this.successMessage = '';
-    this.uiMessageService.setError(this.errorMessage);
+
+  private create(productData: Product) {
+    this.productService.saveProduct(productData).subscribe({
+      next: response => {
+        this.handleSuccess(response, "ajouté");
+        this.productService.addToProducts(response);
+      },
+      error: (err) => {
+        this.handleError(err, `création du produit ${productData.product_name}`);
+        this.isSubmitting.set(false);
+      },
+      complete: () => this.isSubmitting.set(false)
+    });
   }
 
-  private success(response: any, operation: string) {
-    console.log(`Produit ${operation}`, response);
-    this.successMessage = `Produit ${operation} avec succès`;
-    this.errorMessage = '';
-    this.productForm.reset();
-    this.productForm.markAsPristine();
-    this.productForm.markAsUntouched();
-    this.router.navigate(['/products'], { state: { refresh: true }});
-    this.uiMessageService.setSuccess(this.successMessage);
+  private update(productData: Product) {
+    productData.id = this.productId!;
+    this.productService.updateProduct(productData).subscribe({
+      next: response => {
+        this.handleSuccess(response, "modifié");
+        this.productService.updateInProducts(response);
+      },
+      error: (err) => this.handleError(err, `mise à jour du produit ${productData.product_name}`),
+      complete: () => this.isSubmitting.set(false)
+    });
+  }
+
+  private handleError(err: any, action: string) {
+    console.error(`${action} failed`, err);
+    this.uiMessageService.setError(`Échec de la ${action}: ${err?.error?.message}.`);
+    this.isSubmitting.set(false);
+  }
+
+  private handleSuccess(response: any, action: string) {
+    console.log(`succès ${action}`, response);
+    this.uiMessageService.setSuccess(`Produit ${action} avec succès`);
+    this.router.navigate(['/products'], { state: { refresh: true } });
   }
 }
 

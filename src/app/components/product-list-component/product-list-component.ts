@@ -26,9 +26,7 @@ export class ProductListComponent implements OnInit {
     public uiMessageService: UiMessageService) { }
 
   ngOnInit() {
-    if (this.uiMessageService.successMessage()) {
-      this.refresh();
-    }
+    this.productService.getProducts().subscribe();
     this.products = this.productService.products;
   }
 
@@ -37,23 +35,21 @@ export class ProductListComponent implements OnInit {
   }
 
   confirmDelete() {
-  const id = this.pendingDeleteId();
-  if (!id) return;
+    const id = this.pendingDeleteId();
+    if (!id) return;
 
-  this.productService.deleteProduct(id).subscribe({
-    next: () => {
-      this.uiMessageService.setSuccess('Produit supprimé avec succès!');
-      this.refresh();
-    },
-    error: () => {
-      this.uiMessageService.setError('Echec de la tentative de suppression.');
-    },
-    complete: () => {
-      this.pendingDeleteId.set(null);
-    }
-  });
-}
-  refresh() {
-    this.productService.fetchProducts();
+    this.productService.deleteProduct(id).subscribe({
+      next: () => {
+        this.uiMessageService.setSuccess('Produit supprimé avec succès!');
+        this.productService.removeFromProducts(id);
+      },
+      error: () => {
+        this.pendingDeleteId.set(null);
+        this.uiMessageService.setError('Echec de la tentative de suppression.');
+      },
+      complete: () => {
+        this.pendingDeleteId.set(null);
+      }
+    });
   }
 }

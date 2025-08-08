@@ -9,12 +9,12 @@ export class UiMessageService {
 
   setSuccess(message: string) {
     this.successMessage.set(message);
-    setTimeout(() => this.successMessage.set(null), 4000);
+    setTimeout(() => this.successMessage.set(null), 10000);
   }
 
   setError(message: string) {
     this.errorMessage.set(message);
-    setTimeout(() => this.errorMessage.set(null), 4000);
+    setTimeout(() => this.errorMessage.set(null), 10000);
   }
 
   clearMessages() {

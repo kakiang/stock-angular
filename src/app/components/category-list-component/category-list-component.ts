@@ -17,6 +17,7 @@ export class CategoryListComponent implements OnInit {
   loading = this.categoryService.loading;
 
   pendingDeleteId = signal<number | null>(null);
+  isDeleting = signal(false);
 
   constructor(
     private router: Router,
@@ -36,17 +37,20 @@ export class CategoryListComponent implements OnInit {
     const id = this.pendingDeleteId();
     if (!id) return;
 
+    this.isDeleting.set(true);
     this.categoryService.deleteCategorie(id).subscribe({
       next: () => {
         this.categoryService.removeFromCategories(id);
         this.uiMessageService.setSuccess('Catégorie supprimée avec succès!');
       },
-      error: () => {
+      error: (err) => {
         this.pendingDeleteId.set(null);
-        this.uiMessageService.setError('Echec de la tentative de suppression.');
+        this.isDeleting.set(false);
+        this.uiMessageService.setError(`Echec: ${err?.error?.message || "Une erreur est survenue lors de la suppression"}`);
       },
       complete: () => {
         this.pendingDeleteId.set(null);
+        this.isDeleting.set(false);
       }
     });
   }

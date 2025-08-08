@@ -19,6 +19,7 @@ export class ProductListComponent implements OnInit {
   loading = this.productService.loading;
 
   pendingDeleteId = signal<number | null>(null);
+  isDeleting = signal(false);
 
 
   constructor(
@@ -38,17 +39,20 @@ export class ProductListComponent implements OnInit {
     const id = this.pendingDeleteId();
     if (!id) return;
 
+    this.isDeleting.set(true);
     this.productService.deleteProduct(id).subscribe({
       next: () => {
         this.uiMessageService.setSuccess('Produit supprimé avec succès!');
         this.productService.removeFromProducts(id);
       },
-      error: () => {
+      error: (err) => {
         this.pendingDeleteId.set(null);
-        this.uiMessageService.setError('Echec de la tentative de suppression.');
+        this.isDeleting.set(false);
+        this.uiMessageService.setError(`Echec:  ${err?.error?.message || 'erreur inconnue'}`);
       },
       complete: () => {
         this.pendingDeleteId.set(null);
+        this.isDeleting.set(false);
       }
     });
   }

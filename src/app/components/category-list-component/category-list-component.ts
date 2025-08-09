@@ -48,7 +48,7 @@ export class CategoryListComponent implements OnInit {
       error: (err) => {
         this.pendingDeleteId.set(null);
         this.isDeleting.set(false);
-        this.uiMessageService.setError(`Echec: ${err?.error?.message || "Une erreur est survenue lors de la suppression"}`);
+        this.uiMessageService.setError(`${err?.error?.message || "Une erreur est survenue lors de la suppression"}`);
       },
       complete: () => {
         this.pendingDeleteId.set(null);

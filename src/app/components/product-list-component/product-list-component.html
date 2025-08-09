@@ -70,7 +70,7 @@
           @if (isAuth()){
           <td class="py-2 px-6 text-right space-x-6">
             <button
-              class="text-xl hover:scale-110 text-blue-600 hover:text-blue-800 transition"
+              class="text-xl hover:scale-110 text-blue-600 hover:text-blue-800 transition cursor-pointer"
               (click)="editProduct(product.id)"
               title="Edit Product"
               aria-label="Edit product"
@@ -78,7 +78,7 @@
               ✏️
             </button>
             <button
-              class="text-xl hover:scale-110 text-red-600 hover:text-red-800 transition"
+              class="text-xl hover:scale-110 text-red-600 hover:text-red-800 transition cursor-pointer"
               (click)="pendingDeleteId.set(product.id)"
               title="Delete Product"
               aria-label="Delete product"
@@ -117,7 +117,7 @@
     <div class="flex justify-center gap-4 mt-6">
       <button
         (click)="confirmDelete()"
-        class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded"
+        class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded cursor-pointer"
       >
         @if(isDeleting()){
           <svg

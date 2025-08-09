@@ -3,6 +3,7 @@ import { CategoryService } from '../../services/category.service';
 import { UiMessageService } from '../../services/ui-message.service';
 import { Router, RouterLink } from '@angular/router';
 import { Category } from '../../models/category.interface';
+import { AUTH_STATE } from '../../authentication/auth-state';
 
 @Component({
   selector: 'app-category-list-component',
@@ -16,6 +17,7 @@ export class CategoryListComponent implements OnInit {
   categories!: Signal<Category[]>;;
   loading = this.categoryService.loading;
 
+  isAuth: Signal<boolean> = inject(AUTH_STATE);
   pendingDeleteId = signal<number | null>(null);
   isDeleting = signal(false);
 

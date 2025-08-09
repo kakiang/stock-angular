@@ -16,21 +16,8 @@ export class ProductService {
   loading = signal(false);
 
   constructor() {
-    // this.fetchProducts();
   }
-  
-  // fetchProducts(): void {
-  //   this.loading.set(true);
-  //   this.http.get<Product[]>(this.productsApi).subscribe({
-  //     next: (data) => this.products.set(data),
-  //     error: (err) => {
-  //       console.error('Error fetching products:', err);
-  //       this.products.set([]);
-  //       this.loading.set(false);
-  //     },
-  //     complete: () => this.loading.set(false),
-  //   });
-  // }
+
 
   getProducts(): Observable<Product[]> {
       const cached = this.cache();

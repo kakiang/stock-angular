@@ -12,21 +12,30 @@
       <span class="block sm:inline">{{ uiMessageService.errorMessage() }}.</span>
     </div>
   }
+  @if(loading()){
+  <div class="py-6 text-2xl flex justify-center items-center gap-2 animate-pulse">
+    <p>Chargement des produits </p> 
+    <svg class="h-8 w-8 animate-spin text-blue" viewBox="0 0 24 24" fill="none">
+            <circle class="opacity-55" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+          </svg>
+  </div>
+  
+  } @else {
 <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+  
   <div class="flex justify-between items-center px-6 py-4 border-b bg-gray-50">
     <h2 class="text-lg font-semibold text-gray-800">LISTE DES PRODUITS</h2>
+     @if (isAuth()){
     <a
       routerLink="/products/new"
       class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded shadow transition"
     >
       + AJOUTER UN PRODUIT
     </a>
-  </div>
-  @if(loading()){
-  <div class="py-4 text-center text-sm text-gray-500 animate-pulse">
-    Chargement de produits...
-  </div>
   }
+  </div>
 
   <div class="overflow-x-auto">
     <table class="min-w-full text-sm text-left text-gray-800">
@@ -36,7 +45,9 @@
           <th class="py-3 px-6">Code produit</th>
           <th class="py-3 px-6 text-center">Categorie</th>
           <th class="py-3 px-12 text-right">Prix</th>
+          @if (isAuth()){
           <th class="py-3 px-9 text-right">Actions</th>
+          }
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-200">
@@ -56,9 +67,10 @@
           <td class="py-2 px-12 text-right font-semibold">
             {{ product.price | number : "1.2-2" }} Fcfa
           </td>
+          @if (isAuth()){
           <td class="py-2 px-6 text-right space-x-6">
             <button
-              class="text-2xl hover:scale-110 text-blue-600 hover:text-blue-800 transition"
+              class="text-xl hover:scale-110 text-blue-600 hover:text-blue-800 transition"
               (click)="editProduct(product.id)"
               title="Edit Product"
               aria-label="Edit product"
@@ -66,7 +78,7 @@
               ✏️
             </button>
             <button
-              class="text-2xl hover:scale-110 text-red-600 hover:text-red-800 transition"
+              class="text-xl hover:scale-110 text-red-600 hover:text-red-800 transition"
               (click)="pendingDeleteId.set(product.id)"
               title="Delete Product"
               aria-label="Delete product"
@@ -74,6 +86,7 @@
               🗑️
             </button>
           </td>
+        }
         </tr>
         } @empty {
         <tr>
@@ -90,6 +103,7 @@
     Affichage de {{ products().length }} produits.
   </div>
 </div>
+}
 
 @if(pendingDeleteId() !== null) {
 

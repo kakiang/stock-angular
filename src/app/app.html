@@ -1,5 +1,6 @@
-<main class="bg-gray-100 font-sans leading-normal tracking-normal min-h-screen">
+<main class="bg-gray-100 h-full font-sans leading-normal tracking-normal min-h-screen">
 
+  @if (currentRoute() !== '/login') {
   <header class="bg-white shadow">
     <div class="container mx-auto p-4 sm:p-6 lg:p-8 flex justify-between items-center">
       <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center gap-2">
@@ -33,15 +34,26 @@
           class="text-gray-700 hover:text-indigo-600"
         >Categories</a>
 
-        <a
+        <!-- <a
           routerLink="/login"
           routerLinkActive="font-bold text-indigo-600"
           class="text-gray-700 hover:text-indigo-600"
-        >Login</a>
+        >Login</a> -->
+         @if (!authService.username()) {
+          <a routerLink="/login" routerLinkActive="font-bold text-indigo-600"
+            class="text-gray-700 hover:text-indigo-600">Login</a>
+        }
+
+        @if (authService.username()) {
+          <span class="text-gray-600"> 👤 {{ authService.username() }}</span>
+          <button (click)="logout()" class="text-red-600 hover:underline">Logout</button>
+        
+        }
+        
       </nav>
     </div>
   </header>
-
+  }
   <section class="container mx-auto p-4 sm:p-6 lg:p-8">
     <router-outlet></router-outlet>
   </section>

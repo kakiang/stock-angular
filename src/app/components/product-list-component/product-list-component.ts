@@ -4,8 +4,7 @@ import { Product } from '../../models/product.interface';
 import { ProductService } from '../../services/product.service';
 import { Router, RouterLink } from '@angular/router';
 import { UiMessageService } from '../../services/ui-message.service';
-import { AuthService } from '../../authentication/auth.service';
-import { AUTH_STATE } from '../../authentication/auth-state';
+import { AuthStateService } from '../../authentication/services/auth-state.service';
 
 @Component({
   selector: 'app-product-list-component',
@@ -17,8 +16,7 @@ import { AUTH_STATE } from '../../authentication/auth-state';
 export class ProductListComponent implements OnInit {
 
   private productService = inject(ProductService);
-  private auth = inject(AuthService);
-  isAuth: Signal<boolean> = inject(AUTH_STATE);
+  auth = inject(AuthStateService);
   
   products = signal<Product[]>([]);
   loading = this.productService.loading;
@@ -60,9 +58,5 @@ export class ProductListComponent implements OnInit {
         this.isDeleting.set(false);
       }
     });
-  }
-
-  get isAdmin() {
-    return this.auth.hasRole('ROLE_ADMIN');
   }
 }

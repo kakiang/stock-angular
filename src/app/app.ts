@@ -1,6 +1,6 @@
 import { Component, computed, inject, Signal, signal } from '@angular/core';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
-import { AuthService } from './authentication/auth.service';
+import { AuthStateService } from './authentication/services/auth-state.service';
 
 @Component({
   selector: 'app-root',
@@ -10,12 +10,10 @@ import { AuthService } from './authentication/auth.service';
 })
 export class App {
   private router = inject(Router);
+  authService = inject(AuthStateService);
   currentRoute: Signal<string>;
-  isDropdownOpen: boolean = false;
 
-  constructor(public authService: AuthService) {
-    this.authService.loadFromStorage();
-
+  constructor() {
     const routeSignal = signal(this.router.url);
 
     this.router.events.subscribe(() => {
@@ -27,7 +25,6 @@ export class App {
 
   logout() {
     this.authService.logout();
-    this.isDropdownOpen = false;
     this.router.navigate(['/login']);
   }
 }

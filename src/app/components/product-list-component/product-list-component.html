@@ -5,36 +5,45 @@
   <strong class="font-bold">Succès ! </strong>
   <span class="block sm:inline">{{ uiMessageService.successMessage() }}.</span>
 </div>
-}
-  @if(uiMessageService.errorMessage()){
-    <div class="bg-red-100 border border-red-400 text-red-700 py-4 px-3 rounded relative mb-4">
-      <strong class="font-bold">Erreur ! </strong>
-      <span class="block sm:inline">{{ uiMessageService.errorMessage() }}.</span>
-    </div>
-  }
-  @if(loading()){
-  <div class="py-6 text-2xl flex justify-center items-center gap-2 animate-pulse">
-    <p>Chargement des produits </p> 
-    <svg class="h-8 w-8 animate-spin text-blue" viewBox="0 0 24 24" fill="none">
-            <circle class="opacity-55" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-            <path class="opacity-75" fill="currentColor"
-              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-          </svg>
-  </div>
-  
-  } @else {
+} @if(uiMessageService.errorMessage()){
+<div
+  class="bg-red-100 border border-red-400 text-red-700 py-4 px-3 rounded relative mb-4"
+>
+  <strong class="font-bold">Erreur ! </strong>
+  <span class="block sm:inline">{{ uiMessageService.errorMessage() }}.</span>
+</div>
+} @if(loading()){
+<div class="py-6 text-2xl flex justify-center items-center gap-2 animate-pulse">
+  <p>Chargement des produits</p>
+  <svg class="h-8 w-8 animate-spin text-blue" viewBox="0 0 24 24" fill="none">
+    <circle
+      class="opacity-55"
+      cx="12"
+      cy="12"
+      r="10"
+      stroke="currentColor"
+      stroke-width="4"
+    />
+    <path
+      class="opacity-75"
+      fill="currentColor"
+      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+    />
+  </svg>
+</div>
+
+} @else {
 <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-  
   <div class="flex justify-between items-center px-6 py-4 border-b bg-gray-50">
     <h2 class="text-lg font-semibold text-gray-800">LISTE DES PRODUITS</h2>
-     @if (isAuth()){
+    @if (auth.isAuth()){
     <a
       routerLink="/products/new"
       class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded shadow transition"
     >
       + AJOUTER UN PRODUIT
     </a>
-  }
+    }
   </div>
 
   <div class="overflow-x-auto">
@@ -45,7 +54,7 @@
           <th class="py-3 px-6">Code produit</th>
           <th class="py-3 px-6 text-center">Categorie</th>
           <th class="py-3 px-12 text-right">Prix</th>
-          @if (isAuth()){
+          @if (auth.isAuth()){
           <th class="py-3 px-9 text-right">Actions</th>
           }
         </tr>
@@ -67,7 +76,7 @@
           <td class="py-2 px-12 text-right font-semibold">
             {{ product.price | number : "1.2-2" }} Fcfa
           </td>
-          @if (isAuth()){
+          @if (auth.isAuth()){
           <td class="py-2 px-6 text-right space-x-6">
             <button
               class="text-xl hover:scale-110 text-blue-600 hover:text-blue-800 transition cursor-pointer"
@@ -77,6 +86,7 @@
             >
               ✏️
             </button>
+            @if (auth.isAdmin()){
             <button
               class="text-xl hover:scale-110 text-red-600 hover:text-red-800 transition cursor-pointer"
               (click)="pendingDeleteId.set(product.id)"
@@ -85,8 +95,9 @@
             >
               🗑️
             </button>
+            }
           </td>
-        }
+          }
         </tr>
         } @empty {
         <tr>
@@ -103,9 +114,7 @@
     Affichage de {{ products().length }} produits.
   </div>
 </div>
-}
-
-@if(pendingDeleteId() !== null) {
+} @if(pendingDeleteId() !== null) {
 
 <div
   class="fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-50"
@@ -120,31 +129,31 @@
         class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded cursor-pointer"
       >
         @if(isDeleting()){
-          <svg
-            class="animate-spin h-5 w-5 text-white"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-            />
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-            />
-          </svg>
+        <svg
+          class="animate-spin h-5 w-5 text-white"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+          />
+        </svg>
 
-          <span class="animate-pulse">Suppression</span>
-          } @else {
-          <span>Oui, Supprimer</span>
-          }
+        <span class="animate-pulse">Suppression</span>
+        } @else {
+        <span>Oui, Supprimer</span>
+        }
       </button>
       <button
         (click)="pendingDeleteId.set(null)"

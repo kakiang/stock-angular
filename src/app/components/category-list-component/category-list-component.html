@@ -36,7 +36,7 @@
 <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
   <div class="flex justify-between items-center px-6 py-4 border-b bg-gray-50">
     <h2 class="text-lg font-semibold text-gray-800">LISTE DES CATEGORIES</h2>
-    @if (isAuth()){
+    @if (auth.isAuth()){
     <a
       routerLink="/categories/new"
       class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded shadow transition"
@@ -57,7 +57,7 @@
         <tr>
           <th class="py-3 px-6">Code catégorie</th>
           <th class="py-3 px-6">Nom catégorie</th>
-          @if (isAuth()){
+          @if (auth.isAuth()){
           <th class="py-3 px-9 text-right">Actions</th>
           }
         </tr>
@@ -71,7 +71,7 @@
           <td class="py-2 px-6 font-semibold">
             {{ category.category_name }}
           </td>
-          @if (isAuth()){
+          @if (auth.isAuth()){
           <td class="py-2 px-6 text-right space-x-6">
             <button
               class="text-2xl hover:scale-110 text-blue-600 hover:text-blue-800 transition cursor-pointer"
@@ -81,6 +81,7 @@
             >
               ✏️
             </button>
+            @if (auth.isAdmin()){
             <button
               class="text-2xl hover:scale-110 text-red-600 hover:text-red-800 transition cursor-pointer"
               (click)="pendingDeleteId.set(category.id)"
@@ -89,6 +90,7 @@
             >
               🗑️
             </button>
+            }
           </td>
           }
         </tr>

@@ -41,20 +41,22 @@
           >Catégories</a
         >
 
-        @if (!authService.username()) {
-        <a
-          routerLink="/login"
-          routerLinkActive="font-bold text-indigo-600"
-          class="text-gray-700 hover:text-indigo-600"
-          >Login</a
-        >
-        } @if (authService.username()) {
-        <span class="text-gray-600"> 👤 {{ authService.username() }}</span>
-        <button
-          (click)="logout()"
-          class="text-red-600"
-        >
-          <span class="px-2 py-1 hover:shadow-lg rounded-md bg-white outline-1 outline-black/5 cursor-pointer">Logout</span>
+        @if (!authService.isAuth()) {
+        <div class="ml-8">
+          <a
+            routerLink="/login"
+            class="px-4 py-2 font-semibold text-sm text-indigo-600 bg-indigo-50 rounded-full hover:bg-indigo-100 transition-colors duration-200 cursor-pointer"
+          >
+            Login
+          </a>
+        </div>
+        } @if (authService.isAuth() && authService.username()) {
+        <span class="text-gray-600 pl-8"> 👤 {{ authService.username() }}</span>
+        <button (click)="logout()" class="text-red-600 h-4">
+          <span
+            class="px-4 py-2 font-semibold text-sm bg-indigo-50 rounded-full hover:bg-indigo-100 transition-colors duration-200 cursor-pointer"
+            >Logout</span
+          >
         </button>
         }
       </nav>
